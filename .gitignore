@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Third-party Libraries (bundled)
+libs/
+
+# Runtime Data (contains secrets, user data)
+data/
+backend/uploads/
+backend/sounds/*.wav
+
+# Logs
+*.log
+backend_start.log
+start_log.txt
+pip_full.log
+pip_libs.log
+
+# Tunnel Binary
+tunnel/cloudflared.exe
+
+# Test/Diagnostic Outputs
+tunnel/device_test_err.txt
+tunnel/test_result.txt
+tunnel/hostapi_diag.json
+tunnel/device_test_result.json
+tunnel/quick_check_result.json
+tunnel/adversarial_review.json
+tunnel/cloudflared_setup.txt
+tunnel/tunnel.log
+
+# IDE / Editor
+.vscode/
+.idea/
+.trae/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Temp Files
+*.tmp
+*.bak
