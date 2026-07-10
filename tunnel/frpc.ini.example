@@ -1,0 +1,23 @@
+# ============================================================
+# frp 配置示例（备选：需自备 VPS）
+# 用法：在 VPS 运行 frps，在本机运行 frpc -c frpc.ini
+# ============================================================
+[common]
+server_addr = YOUR_VPS_IP
+server_port = 7000
+# 如 VPS 的 frps 设置了 token，取消下面注释并填写
+# token = your_secret_token
+
+[echo-http]
+type = http
+local_ip = 127.0.0.1
+local_port = 8000
+# 需要在 VPS 的 frps 配置 vhost_http_port，并做好域名解析
+custom_domains = echo.yourdomain.com
+
+# 如无域名，可用 tcp 模式（访问 http://YOUR_VPS_IP:6000）
+# [echo-tcp]
+# type = tcp
+# local_ip = 127.0.0.1
+# local_port = 8000
+# remote_port = 6000

@@ -1,0 +1,26 @@
+# Echo 噪音反馈系统 - Python 依赖
+# 安装方式: pip install -r requirements.txt
+
+# Web 服务
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-multipart>=0.0.9
+
+# 音频处理
+sounddevice>=0.4.6
+numpy>=1.26
+scipy>=1.12
+soundfile>=0.12.1
+
+# 任务调度
+apscheduler>=3.10
+
+# QR 码生成
+qrcode>=7.0
+pillow>=10.2
+
+# Windows 音频 API
+pycaw>=20230407
+
+# 系统托盘
+pystray>=0.19.5

@@ -1,0 +1,54 @@
+{
+  "/api/sounds": {
+    "status": 200,
+    "type": "list",
+    "preview": "[{\"id\": \"l1_hum\", \"name\": \"L1 持续低频嗡声\", \"type\": \"builtin\", \"path\": \"D:\\\\桌面文件\\\\echo-project\\\\backend\\\\sounds\\\\l1_hum.wav\", \"duration_ms\": 4000, \"created_ts\": \"2026-07-02T00:49:03.332338\"}, {\"id\": \"l2_pulse\", \"name\": \"L2 间歇低频脉冲\", \"type\": \"builtin\", \"path\": \"D:\\\\桌面文件\\\\echo-project\\\\backend\\\\sounds\\\\l2_pulse.wav\", \"duration_ms\": 8000, \"created_ts\": \"2026-07-02T00:49:03.356191\"}, {\"id\": \"l3_sweep\", \"name\": \"L3 连续强低频扫频\", \"type\": \"builtin\", \"path\": \"D:\\\\桌面文件\\\\echo-project\\\\backend\\\\sounds\\\\l3_sweep.wav\", \"duration_ms\": 15000, \"created_ts\": \"2026-07-02T00:49:03.383823\"}, {\"id\": \"3df91bf0d9f7\", \"name\": \"test_sweep\", \"type\": \"synthesized\", \"path\": \"D:\\\\桌面文件\\\\echo-project\\\\backend\\\\sounds\\\\3df91bf0d9f7.wav\", \"duration_ms\": 2000, \"created_ts\": \"2026-07-02T21:20:27.139556\"}, {\"id\": \"52cae3f7159b\", \"name",
+    "keys": "len=9"
+  },
+  "/api/devices": {
+    "status": 200,
+    "type": "dict",
+    "preview": "{\"input\": [{\"index\": 0, \"name\": \"Microsoft Sound Mapper - Input\", \"channels\": 2, \"default_sr\": 44100.0}, {\"index\": 1, \"name\": \"麦克风 (USBAudio2.0)\", \"channels\": 1, \"default_sr\": 44100.0}, {\"index\": 6, \"name\": \"主声音捕获驱动程序\", \"channels\": 2, \"default_sr\": 44100.0}, {\"index\": 7, \"name\": \"麦克风 (USBAudio2.0)\", \"channels\": 1, \"default_sr\": 44100.0}, {\"index\": 15, \"name\": \"麦克风 (USBAudio2.0)\", \"channels\": 1, \"default_sr\": 48000.0}, {\"index\": 16, \"name\": \"立体声混音 (Realtek HD Audio Stereo input)\", \"channels\": 2, \"default_sr\": 48000.0}, {\"index\": 17, \"name\": \"线路输入 (Realtek HD Audio Line input)\", \"channels\": 2, \"default_sr\": 44100.0}, {\"index\": 18, \"name\": \"麦克风 (Realtek HD Audio Mic input)\", \"channels\": 2, \"default_sr\": 44100.0}, {\"index\": 22, \"name\": \"Input (@System32\\\\drivers\\\\bthhfenum.sys,#4;%1 Hands-Free",
+    "keys": [
+      "input",
+      "output"
+    ]
+  },
+  "/api/status": {
+    "status": 200,
+    "type": "dict",
+    "preview": "{\"enabled\": true, \"auto_feedback\": true, \"current_db\": 16.6, \"current_dbfs\": -73.4, \"current_rms\": 0.0002134122041752562, \"current_centroid\": 4263.2, \"baseline\": 16.7, \"threshold\": 40.0, \"is_learning\": false, \"detector_state\": \"IDLE\", \"suppressed\": false, \"bt_connected\": true, \"event_count\": 7}",
+    "keys": [
+      "enabled",
+      "auto_feedback",
+      "current_db",
+      "current_dbfs",
+      "current_rms",
+      "current_centroid",
+      "baseline",
+      "threshold",
+      "is_learning",
+      "detector_state",
+      "suppressed",
+      "bt_connected",
+      "event_count"
+    ]
+  },
+  "/api/config": {
+    "status": 200,
+    "type": "dict",
+    "preview": "{\"enabled\": true, \"auto_feedback\": true, \"audio\": {\"sample_rate\": 44100, \"block_size\": 1024, \"input_device\": null, \"output_device\": null, \"calibration_offset\": 90.0}, \"detection\": {\"baseline_learn_seconds\": 60, \"baseline_update_interval_seconds\": 600, \"threshold_offset_db\": 15.0, \"absolute_threshold_db\": 40.0, \"confirm_blocks\": 5, \"min_duration_ms\": 300, \"ignore_transient\": true, \"transient_centroid_hz\": 4000}, \"strategy\": {\"l1_delta_db\": 8.0, \"l2_delta_db\": 18.0, \"l1_duration_s\": 4, \"l2_duration_s\": 8, \"l3_duration_s\": 15, \"l1_sound\": \"alert_beep\", \"l2_sound\": \"alert_siren\", \"l3_sound\": \"alert_buzzer\", \"min_volume\": 0.5, \"max_volume\": 1.0}, \"scheduler\": {\"enabled\": false, \"start_time\": \"06:00\", \"end_time\": \"18:00\", \"interval_minutes\": 3, \"level\": 1}, \"suppression\": {\"cooldown_s\": 3.0}, \"b",
+    "keys": [
+      "enabled",
+      "auto_feedback",
+      "audio",
+      "detection",
+      "strategy",
+      "scheduler",
+      "suppression",
+      "bluetooth",
+      "server",
+      "threshold_offset_db"
+    ]
+  }
+}

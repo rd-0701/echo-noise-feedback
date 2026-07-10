@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f1419">
+<title>Echo 噪音提醒</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icon.svg">
+<link rel="apple-touch-icon" href="assets/icon.svg">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+
+<!-- 登录遮罩 -->
+<div id="login-overlay" class="overlay hidden">
+  <div class="login-card">
+    <h2>Echo 噪音提醒</h2>
+    <p>请输入访问密码（Token）<br>密码在电脑端 Echo 启动时显示</p>
+    <input id="token-input" type="text" placeholder="粘贴密码" autocomplete="off">
+    <button id="login-btn">连接</button>
+    <p id="login-msg" class="msg"></p>
+  </div>
+</div>
+
+<!-- 顶部状态栏 -->
+<header>
+  <div class="title">Echo</div>
+  <div class="status-pills">
+    <span id="bt-pill" class="pill pill-unknown">音响</span>
+    <span id="state-pill" class="pill">准备中</span>
+    <label class="switch">
+      <input type="checkbox" id="master-toggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+</header>
+
+<!-- 主内容区 -->
+<main>
+  <!-- ===== 首页（仪表盘） ===== -->
+  <section id="view-dashboard" class="view active">
+    <!-- 大分贝显示 -->
+    <div class="gauge-wrap">
+      <div class="gauge">
+        <div class="gauge-value" id="db-value">--</div>
+        <div class="gauge-label">分贝</div>
+      </div>
+      <div class="gauge-bar">
+        <div class="gauge-fill" id="db-fill"></div>
+        <div class="gauge-mark" id="threshold-mark"></div>
+      </div>
+      <div class="gauge-info">
+        <span>环境底噪 <b id="baseline-val">--</b></span>
+        <span>触发线 <b id="threshold-val">--</b></span>
+      </div>
+    </div>
+
+    <!-- 自动提醒开关 -->
+    <div class="auto-fb-card" id="auto-fb-card">
+      <div class="auto-fb-info">
+        <span class="auto-fb-title">自动提醒</span>
+        <span class="auto-fb-desc">噪音超标时自动播放提醒音</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="auto-feedback-toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- 麦克风诊断卡片（异常时显示） -->
+    <div id="mic-warning" class="mic-warning hidden">
+      <div class="mic-warning-title" id="mic-warning-title">麦克风异常</div>
+      <div class="mic-warning-desc" id="mic-warning-desc"></div>
+    </div>
+
+    <!-- 手动提醒按钮 -->
+    <div class="trigger-section">
+      <p class="section-hint">手动播放提醒音（测试用）</p>
+      <div class="trigger-row">
+        <button class="btn-trig" data-level="1">
+          <span class="trig-icon">●</span>
+          <span class="trig-label">轻提醒</span>
+        </button>
+        <button class="btn-trig" data-level="2">
+          <span class="trig-icon">●●</span>
+          <span class="trig-label">中警告</span>
+        </button>
+        <button class="btn-trig" data-level="3">
+          <span class="trig-icon">●●●</span>
+          <span class="trig-label">强干预</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 实时事件 -->
+    <h3>最近记录</h3>
+    <ul id="event-log" class="event-log"></ul>
+  </section>
+
+  <!-- ===== 设置 ===== -->
+  <section id="view-settings" class="view">
+    <!-- 麦克风设备选择 -->
+    <h3>麦克风选择</h3>
+    <div class="mic-device-card">
+      <label>选择麦克风<br><small class="hint-inline">如果当前麦克风没声音，换一个试试</small>
+        <select id="cfg-input-device" class="device-select">
+          <option value="">系统默认</option>
+        </select>
+      </label>
+      <div class="mic-test-row">
+        <button class="btn" id="mic-test-btn">测试麦克风</button>
+        <span id="mic-test-result" class="mic-test-result"></span>
+      </div>
+      <button class="btn btn-primary" id="apply-device-btn">应用麦克风</button>
+    </div>
+
+    <!-- 简单设置 -->
+    <h3>基本设置</h3>
+    <div class="form-grid">
+      <label>触发灵敏度<br><small class="hint-inline">数字越大越容易触发</small>
+        <input type="number" id="cfg-threshold-offset" step="1" min="0" max="40">
+      </label>
+      <label>最低触发分贝<br><small class="hint-inline">低于此值永不触发</small>
+        <input type="number" id="cfg-abs-threshold" step="1" min="0">
+      </label>
+      <label>响多久才触发（毫秒）<br><small class="hint-inline">短于此时间的声音忽略</small>
+        <input type="number" id="cfg-min-duration" step="50" min="0">
+      </label>
+      <label>忽略敲门声<br><small class="hint-inline">打勾=忽略短促撞击声</small>
+        <input type="checkbox" id="cfg-ignore-transient">
+      </label>
+    </div>
+    <button class="btn" id="baseline-reset-btn">重新学习环境噪音</button>
+
+    <h3>提醒音量</h3>
+    <div class="form-grid">
+      <label>最小音量<input type="number" id="cfg-min-vol" step="0.1" min="0" max="1"></label>
+      <label>最大音量<input type="number" id="cfg-max-vol" step="0.1" min="0" max="1"></label>
+    </div>
+
+    <h3>分级触发</h3>
+    <div class="form-grid">
+      <label>轻微超标（超多少分贝）<input type="number" id="cfg-l1-delta" step="1"></label>
+      <label>严重超标（超多少分贝）<input type="number" id="cfg-l2-delta" step="1"></label>
+    </div>
+
+    <h3>定时提醒</h3>
+    <div class="form-grid">
+      <label>启用定时提醒<input type="checkbox" id="cfg-sched-enabled"></label>
+      <label>开始时间<input type="time" id="cfg-sched-start"></label>
+      <label>结束时间<input type="time" id="cfg-sched-end"></label>
+      <label>间隔（分钟）<input type="number" id="cfg-sched-interval" step="1" min="1"></label>
+      <label>提醒强度
+        <select id="cfg-sched-level">
+          <option value="1">轻提醒</option>
+          <option value="2">中警告</option>
+          <option value="3">强干预</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- 高级设置折叠 -->
+    <details class="advanced-section">
+      <summary>高级设置</summary>
+      <div class="form-grid">
+        <label>确认块数<input type="number" id="cfg-confirm-blocks" step="1" min="1"></label>
+        <label>L1 时长（秒）<input type="number" id="cfg-l1-dur" step="1"></label>
+        <label>L2 时长（秒）<input type="number" id="cfg-l2-dur" step="1"></label>
+        <label>L3 时长（秒）<input type="number" id="cfg-l3-dur" step="1"></label>
+        <label>冷却时间（秒）<input type="number" id="cfg-cooldown" step="0.5"></label>
+      </div>
+    </details>
+
+    <button class="btn btn-primary btn-save" id="save-config-btn">保存设置</button>
+    <span id="save-msg" class="msg"></span>
+    <p class="save-hint">设置保存在电脑上，下次打开自动恢复</p>
+  </section>
+
+  <!-- ===== 历史 ===== -->
+  <section id="view-history" class="view">
+    <div class="range-tabs">
+      <button class="range-btn active" data-range="day">今天</button>
+      <button class="range-btn" data-range="week">本周</button>
+      <button class="range-btn" data-range="month">本月</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><b id="stat-events">0</b><span>噪音事件</span></div>
+      <div class="stat"><b id="stat-playbacks">0</b><span>提醒次数</span></div>
+      <div class="stat"><b id="stat-peak">--</b><span>最高分贝</span></div>
+    </div>
+    <h3>分贝趋势</h3>
+    <canvas id="chart-db" height="160"></canvas>
+    <h3>每日事件数</h3>
+    <canvas id="chart-daily" height="140"></canvas>
+    <h3>什么时间最吵</h3>
+    <canvas id="chart-hourly" height="140"></canvas>
+    <h3>提醒等级分布</h3>
+    <canvas id="chart-level" height="140"></canvas>
+    <h3>事件记录</h3>
+    <ul id="history-event-list" class="history-event-list"></ul>
+  </section>
+
+  <!-- ===== 声音 ===== -->
+  <section id="view-workshop" class="view">
+    <h3>提醒音列表</h3>
+    <p class="hint">点击"试听"播放，点击"使用"绑定到对应等级</p>
+    <ul id="sound-list" class="sound-list"></ul>
+
+    <details class="advanced-section">
+      <summary>上传自己的声音</summary>
+      <input type="file" id="upload-file" accept="audio/*">
+      <button class="btn" id="upload-btn">上传</button>
+    </details>
+
+    <details class="advanced-section">
+      <summary>用电脑麦克风录制</summary>
+      <label>录制时长（秒）<input type="number" id="record-seconds" value="5" min="1" max="60"></label>
+      <button class="btn" id="record-btn">开始录制</button>
+    </details>
+
+    <details class="advanced-section">
+      <summary>合成新声音</summary>
+      <div class="form-grid">
+        <label>名称<input type="text" id="synth-name" value="自定义音"></label>
+        <label>类型
+          <select id="synth-kind">
+            <option value="sweep">扫频</option>
+            <option value="tone">单音</option>
+          </select>
+        </label>
+        <label>起始频率（Hz）<input type="number" id="synth-f0" value="500" step="1"></label>
+        <label>结束频率（Hz）<input type="number" id="synth-f1" value="3000" step="1"></label>
+        <label>时长（秒）<input type="number" id="synth-dur" value="3" step="1"></label>
+      </div>
+      <button class="btn" id="synth-btn">合成</button>
+    </details>
+
+    <details class="advanced-section">
+      <summary>频谱调整（EQ）</summary>
+      <p class="hint">每行一条：低频Hz,高频Hz,增益dB</p>
+      <textarea id="eq-bands" rows="3" placeholder="500,2000,6"></textarea>
+      <button class="btn" id="eq-btn">应用 EQ</button>
+    </details>
+    <span id="workshop-msg" class="msg"></span>
+  </section>
+</main>
+
+<!-- 底部导航 -->
+<nav class="tabbar">
+  <button class="tab active" data-view="dashboard">首页</button>
+  <button class="tab" data-view="settings">设置</button>
+  <button class="tab" data-view="history">历史</button>
+  <button class="tab" data-view="workshop">声音</button>
+</nav>
+
+<script src="js/api.js"></script>
+<script src="js/ws.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/history.js"></script>
+<script src="js/workshop.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

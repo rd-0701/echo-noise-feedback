@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#0f1419"/>
+  <g fill="none" stroke="#4ade80" stroke-width="8" stroke-linecap="round">
+    <path d="M48 120 Q60 96 72 120 T96 120"/>
+    <path d="M104 96 Q116 64 128 96 T152 96" opacity="0.7"/>
+  </g>
+  <circle cx="96" cy="60" r="10" fill="#4ade80"/>
+  <text x="96" y="170" text-anchor="middle" fill="#e5e7eb" font-size="24" font-family="sans-serif">Echo</text>
+</svg>
